@@ -2,15 +2,15 @@
 
 namespace App\Repositories;
 
-use App\Models\Course;
+use App\Models\Section;
 
-class CourseRepo
+class SectionRepo
 {
-    protected Course $model;
+    protected Section $model;
 
-    public function __construct(Course $course)
+    public function __construct(Section $section)
     {
-        $this->model = $course;
+        $this->model = $section;
     }
 
     public function create(array $data)

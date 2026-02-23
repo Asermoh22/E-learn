@@ -32,4 +32,11 @@ class CourseService
             'image'         => $data['image'] ?? null,
         ]);
     }
+
+    public function show(int $id)
+    {
+        return $this->courseRepo->find($id);
+    }
+
+    
 }

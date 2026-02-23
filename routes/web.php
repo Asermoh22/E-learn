@@ -5,30 +5,22 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardInstructorController;
 use App\Http\Controllers\DashboardStudentController;
+use App\Http\Controllers\SectionController;
 
 
 
 
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
 
-// Route::get('/dashboard/instructor', function () {
-//     return view('dashboard-instructor');
-// })->middleware(['auth', 'verified'])->name('instructor.dashboard');
 
 Route::get('/dashboard/instructor', [DashboardInstructorController::class, 'index'])->middleware(['auth', 'verified'])->name('instructor.dashboard');
 Route::get('/dashboard/student', [DashboardStudentController::class, 'index'] )->middleware(['auth', 'verified'])->name('student.dashboard');
 
-// Route::get('/dashboard/student', function () {
-//     return view('dashboard-student');
-// })->middleware(['auth', 'verified'])->name('student.dashboard');
-
-
 Route::get('/dashboard/instructor/add-course',[CourseController::class, 'create'])->name('add-course');
-
 Route::post('/dashboard-instructor/add-course', [CourseController::class, 'store'])->name('courses.store');
+Route::get('/Course/Show/{id}', [CourseController::class, 'show'])->name('courses.show');
+
+Route::post('/sections', [SectionController::class, 'store'])->name('sections.store');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

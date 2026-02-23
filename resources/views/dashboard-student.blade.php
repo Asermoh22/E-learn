@@ -942,7 +942,7 @@ body {
                                 <span class="course-price free">Free</span>
                             @endif
                             
-                            <a href="" class="btn-course">
+                            <a href="{{ route('courses.show',$course->id) }}" class="btn-course">
                                 <i class="fa-regular fa-eye"></i> View
                             </a>
                             

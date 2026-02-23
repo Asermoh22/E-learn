@@ -27,7 +27,7 @@ class CourseController extends Controller
             'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $instructor = Auth::user()->instructor; // Assuming User model has relation
+        $instructor = Auth::user()->instructor; 
         if(!$instructor) {
             return back()->with('error','You are not registered as an instructor');
         }
@@ -37,5 +37,21 @@ class CourseController extends Controller
         $this->courseService->create($data);
 
         return back()->with('success', 'Course created successfully');
+    }
+
+    public function show(Request $request, int $id)
+    {
+        $course = $this->courseService->show($id);
+        $user=Auth::user();
+        if($user->role==='instructor'){
+            return view('course.instructor.show', [
+                'course' => $course,
+            ]);
+        }else{
+            return view('course.show', [
+                        'course' => $course,
+                    ]);
+        }
+       
     }
 }

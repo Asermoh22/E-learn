@@ -1122,6 +1122,7 @@ body {
 
    <section class="course-grid">
     @foreach($courses as $course)
+    <a href="{{ route('courses.show',$course->id) }}">
         <div class="course-item" data-category="{{ $course->category->name ?? 'General' }}">
             <span class="course-badge">
                 @if($course->status == 'trending')
@@ -1163,6 +1164,8 @@ body {
                 </div>
             </div>
         </div>
+    </a>
+        
     @endforeach
 </section>
 
