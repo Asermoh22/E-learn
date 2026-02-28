@@ -17,7 +17,6 @@ class SectionService
 
     public function create(array $data)
     {
-       
 
         return $this->sectionRepo->create([
             'course_id' => $data['course_id'],
@@ -25,10 +24,21 @@ class SectionService
         ]);
     }
 
-    // public function show(int $id)
-    // {
-    //     return $this->courseRepo->find($id);
-    // }
+    public function show(int $id)
+    {
+        return $this->sectionRepo->find($id);
+    }
+
+    public function update(int $id, array $data)
+    {
+        return $this->sectionRepo->updatesection($id, [
+            'title' => $data['title'],
+        ]);
+    }
+    public function delete(int $id)
+    {
+        return $this->sectionRepo->delete($id);
+    }
 
     
 }

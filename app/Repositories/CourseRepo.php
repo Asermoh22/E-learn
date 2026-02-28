@@ -22,5 +22,10 @@ class CourseRepo
     {
         return $this->model->findorfail($id);
     }
+
+    public function sectioncount(int $courseId)
+    {
+        return $this->model->findorfail($courseId)->sections()->count();
+    }
     
 }

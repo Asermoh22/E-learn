@@ -908,7 +908,6 @@ textarea.form-control {
         </div>
     </div>
 
-    <!-- Instructor Course Header -->
     <div class="instructor-course-header">
         <div class="header-grid">
             <div class="header-left">
@@ -1007,7 +1006,7 @@ textarea.form-control {
             <i class="fa-regular fa-list-ul"></i> Curriculum
         </button>
         <button class="tab-btn" onclick="switchTab('students')">
-            <i class="fa-regular fa-users"></i> Students ({{ $course->enrollments_count ?? 1234 }})
+            <i class="fa-solid fa-user-graduate"></i> Students ({{ $course->enrollments_count ?? 1234 }})
         </button>
         <button class="tab-btn" onclick="switchTab('analytics')">
             <i class="fa-regular fa-chart-bar"></i> Analytics
@@ -1016,7 +1015,7 @@ textarea.form-control {
             <i class="fa-regular fa-star"></i> Reviews ({{ $course->reviews_count ?? 89 }})
         </button>
         <button class="tab-btn" onclick="switchTab('settings')">
-            <i class="fa-regular fa-gear"></i> Settings
+            <i class="fa-solid fa-gear"></i> Settings
         </button>
         <button class="tab-btn" onclick="switchTab('promotions')">
             <i class="fa-regular fa-tag"></i> Promotions
@@ -1027,7 +1026,7 @@ textarea.form-control {
     <div id="curriculum" class="content-section active">
         <div class="section-card">
             <div class="section-header">
-                <h2><i class="fa-regular fa-list-ul"></i> Course Curriculum</h2>
+                <h2><i class="fa-solid fa-align-justify"></i> Course Curriculum</h2>
                 <button class="btn-action primary" onclick="openAddSectionModal()">
                     <i class="fa-regular fa-plus"></i> Add Section
                 </button>
@@ -1038,7 +1037,7 @@ textarea.form-control {
                 <div class="curriculum-section-item" data-section-id="{{ $section->id }}" data-order="{{ $section->order ?? $loop->index }}">
                     <div class="curriculum-section-header">
                         <div class="section-title">
-                            <i class="fa-regular fa-grip-vertical drag-handle"></i>
+                            <i class="fa-solid fa-grip-lines"></i>
                             <span class="section-title-text">{{ $section->title }}</span>
                             <input type="text" class="section-title-input" value="{{ $section->title }}" style="display: none;">
                         </div>
@@ -1362,6 +1361,31 @@ textarea.form-control {
         </form>
     </div>
 </div>
+<!-- Add Section Modal -->
+<div id="addSectionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Section</h3>
+            <button class="modal-close" onclick="closeAddSectionModal()">&times;</button>
+        </div>
+        
+        <form id="addSectionForm">
+            @csrf
+            <!-- Add this hidden course_id field -->
+            <input type="hidden" name="course_id" value="{{ $course->id }}">
+            
+            <div class="form-group">
+                <label>Section Title</label>
+                <input type="text" name="title" class="form-control" placeholder="e.g., Introduction to the Course" required>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn-action secondary" onclick="closeAddSectionModal()">Cancel</button>
+                <button type="submit" class="btn-action primary">Create Section</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <!-- Edit Section Modal -->
 <div id="editSectionModal" class="modal">
@@ -1373,7 +1397,7 @@ textarea.form-control {
         
         <form id="editSectionForm">
             @csrf
-            @method('PUT')
+            @method('post')
             <input type="hidden" id="edit_section_id" name="section_id">
             <div class="form-group">
                 <label>Section Title</label>
@@ -1411,7 +1435,6 @@ textarea.form-control {
 </div>
 
 <script>
-// Tab switching
 function switchTab(tabId) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
@@ -1427,7 +1450,39 @@ function switchTab(tabId) {
     }
 }
 
-// Initialize Sortable for drag and drop
+
+document.getElementById('addSectionForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const courseId = '{{ $course->id }}';
+    
+    fetch(`/sections/${courseId}`, { 
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            closeAddSectionModal();
+            showNotification('Section created successfully', 'success');
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            showNotification(data.message || 'Error creating section', 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('Error creating section', 'error');
+        console.error('Error:', error);
+    });
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('curriculumContainer');
     if (container) {
@@ -1440,7 +1495,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Toggle section content
     document.addEventListener('click', function(e) {
         if (e.target.closest('.toggle-section')) {
             const sectionItem = e.target.closest('.curriculum-section-item');
@@ -1456,10 +1510,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Save section order after drag and drop
 
 
-// Section Modal Functions
 function openAddSectionModal() {
     document.getElementById('addSectionModal').classList.add('active');
 }
@@ -1469,10 +1521,8 @@ function closeAddSectionModal() {
     document.getElementById('addSectionForm').reset();
 }
 
-// Handle Add Section Form
 
 
-// Edit Section Functions
 function editSection(sectionId, button) {
     const sectionItem = button.closest('.curriculum-section-item');
     const titleSpan = sectionItem.querySelector('.section-title-text');
@@ -1495,7 +1545,7 @@ document.getElementById('editSectionForm')?.addEventListener('submit', function(
     const formData = new FormData(this);
     const sectionId = document.getElementById('edit_section_id').value;
     
-    fetch(`/instructor/sections/${sectionId}`, {
+    fetch(`/sections/${sectionId}`, {
         method: 'POST',
         body: formData,
         headers: {
@@ -1533,16 +1583,17 @@ function closeDeleteSectionModal() {
 }
 
 // Handle Delete Section Form
+// Handle Delete Section Form
 document.getElementById('deleteSectionForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     
     const formData = new FormData(this);
     const sectionId = document.getElementById('delete_section_id').value;
     
-    fetch(`/instructor/sections/${sectionId}`, {
-        method: 'POST',
-        body: formData,
+    fetch(`/sections/${sectionId}`, {
+        method: 'DELETE',
         headers: {
+            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
             'X-Requested-With': 'XMLHttpRequest'
         }
     })
@@ -1551,17 +1602,19 @@ document.getElementById('deleteSectionForm')?.addEventListener('submit', functio
         if (data.success) {
             // Remove section from DOM
             const sectionItem = document.querySelector(`.curriculum-section-item[data-section-id="${sectionId}"]`);
-            sectionItem.remove();
+            if (sectionItem) {
+                sectionItem.remove();
+            }
             
             showNotification(data.message, 'success');
             closeDeleteSectionModal();
             
             // Show empty state if no sections left
             if (document.querySelectorAll('.curriculum-section-item').length === 0) {
-                location.reload(); // Reload to show empty state
+                location.reload();
             }
         } else {
-            showNotification(data.message, 'error');
+            showNotification(data.message || 'Error deleting section', 'error');
         }
     })
     .catch(error => {

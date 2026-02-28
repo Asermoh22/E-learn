@@ -38,5 +38,10 @@ class CourseService
         return $this->courseRepo->find($id);
     }
 
+    public function sectionCount(int $courseId)
+    {
+        return $this->courseRepo->sectioncount($courseId);
+    }
+
     
 }

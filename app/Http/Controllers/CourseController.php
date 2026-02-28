@@ -42,6 +42,7 @@ class CourseController extends Controller
     public function show(Request $request, int $id)
     {
         $course = $this->courseService->show($id);
+        $sectionCount = $this->courseService->sectionCount($id);
         $user=Auth::user();
         if($user->role==='instructor'){
             return view('course.instructor.show', [
@@ -50,6 +51,7 @@ class CourseController extends Controller
         }else{
             return view('course.show', [
                         'course' => $course,
+                        'sectionCount' => $sectionCount,
                     ]);
         }
        

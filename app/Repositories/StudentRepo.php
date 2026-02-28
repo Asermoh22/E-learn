@@ -16,6 +16,5 @@ class StudentRepo
 
     public function create($student){
         return $this->model->create($student);
-
     }
 }

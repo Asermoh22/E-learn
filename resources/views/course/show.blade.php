@@ -1124,40 +1124,46 @@ body {
             </div>
 
             <!-- Course Curriculum -->
-            <div class="content-card">
-                <div class="card-header">
-                    <h2><i class="fa-solid fa-list-ul"></i> Course Curriculum</h2>
-                    <span>{{ $course->sections_count ?? 12 }} sections • {{ $course->lessons_count ?? 150 }} lessons</span>
-                </div>
-                <div class="card-body">
-                    <div class="curriculum-section">
-                        @for($i = 1; $i <= min(($course->sections_count ?? 5), 5); $i++)
-                        <div class="curriculum-item {{ $i == 1 ? 'active' : '' }}">
+           <div class="content-card">
+            <div class="card-header">
+                <h2><i class="fa-solid fa-align-justify"></i>Course Curriculum</h2>
+                <span>{{ $sectionCount ?? 0 }} sections • {{ $course->lessons_count ?? 0 }} lessons</span>
+            </div>
+            <div class="card-body">
+                <div class="curriculum-section">
+                    @forelse ($course->sections as $section)
+                        <div class="curriculum-item {{ $loop->first ? 'active' : '' }}">
                             <div class="curriculum-header" onclick="toggleCurriculum(this)">
                                 <h3>
                                     <i class="fa-solid fa-chevron-right" style="font-size: 14px; transition: transform 0.3s ease;"></i>
-                                    Section {{ $i }}: {{ ['Introduction', 'Basics', 'Advanced Concepts', 'Projects', 'Final Assessment'][$i-1] ?? 'Course Content' }}
+                                    Section {{ $loop->iteration }}: {{ $section->title }}
                                 </h3>
-                                <span>{{ rand(5, 15) }} lectures • {{ rand(45, 120) }} mins</span>
+                                {{-- <span>{{ $section->lectures()->count() }} lectures • {{ gmdate('H:i', $section->lectures()->sum('duration_in_seconds')) }} mins</span> --}}
                             </div>
                             <div class="curriculum-content">
-                                @for($j = 1; $j <= rand(5, 8); $j++)
+                                {{-- @forelse ($section->lectures as $lecture)
                                 <div class="lecture-item">
                                     <div class="lecture-info">
                                         <i class="fa-regular fa-circle-play"></i>
-                                        <span>Lecture {{ $j }}: {{ ['Introduction', 'Getting Started', 'Core Concepts', 'Examples', 'Practice', 'Quiz', 'Summary'][$j-1] ?? 'Lesson Content' }}</span>
+                                        <span>{{ $lecture->title }}</span>
                                     </div>
                                     <div class="lecture-duration">
-                                        <i class="fa-regular fa-clock"></i> {{ rand(5, 20) }}:00
+                                        <i class="fa-regular fa-clock"></i> {{ $lecture->duration }}
                                     </div>
                                 </div>
-                                @endfor
+                                @empty
+                                <div class="lecture-item">
+                                    <span>No lessons in this section yet.</span>
+                                </div>
+                                @endforelse --}}
                             </div>
                         </div>
-                        @endfor
-                    </div>
+                    @empty
+                    <p>No sections yet for this course.</p>
+                    @endforelse
                 </div>
             </div>
+        </div>
 
             <!-- Requirements -->
             <div class="content-card">

@@ -20,7 +20,9 @@ Route::get('/dashboard/instructor/add-course',[CourseController::class, 'create'
 Route::post('/dashboard-instructor/add-course', [CourseController::class, 'store'])->name('courses.store');
 Route::get('/Course/Show/{id}', [CourseController::class, 'show'])->name('courses.show');
 
-Route::post('/sections', [SectionController::class, 'store'])->name('sections.store');
+Route::post('/sections/{course_id}', [SectionController::class, 'store'])->name('sections.store');
+Route::put('/sections/{id}', [SectionController::class, 'update'])->name('sections.update');
+Route::delete('/sections/{id}', [SectionController::class, 'destroy'])->name('sections.destroy');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
