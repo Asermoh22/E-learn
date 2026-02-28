@@ -1138,13 +1138,13 @@ body {
                                     <i class="fa-solid fa-chevron-right" style="font-size: 14px; transition: transform 0.3s ease;"></i>
                                     Section {{ $loop->iteration }}: {{ $section->title }}
                                 </h3>
-                                {{-- <span>{{ $section->lectures()->count() }} lectures • {{ gmdate('H:i', $section->lectures()->sum('duration_in_seconds')) }} mins</span> --}}
+                                <span>{{ $section->lessons()->count() }} lectures • {{ $section->lessons->sum('duration') }} mins</span>
                             </div>
                             <div class="curriculum-content">
-                                {{-- @forelse ($section->lectures as $lecture)
+                                @forelse ($section->lessons as $lecture)
                                 <div class="lecture-item">
                                     <div class="lecture-info">
-                                        <i class="fa-regular fa-circle-play"></i>
+                                        <i class="fa-solid fa-play-circle"></i>
                                         <span>{{ $lecture->title }}</span>
                                     </div>
                                     <div class="lecture-duration">
@@ -1155,7 +1155,7 @@ body {
                                 <div class="lecture-item">
                                     <span>No lessons in this section yet.</span>
                                 </div>
-                                @endforelse --}}
+                                @endforelse
                             </div>
                         </div>
                     @empty

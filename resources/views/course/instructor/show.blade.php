@@ -12,6 +12,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- SortableJS for drag and drop -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<!-- CSRF Token -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <style>
 :root {
@@ -582,6 +584,11 @@ body {
     color: var(--danger);
 }
 
+.btn-icon.success:hover {
+    border-color: var(--success);
+    color: var(--success);
+}
+
 .lecture-list {
     padding: 0 20px 20px 50px;
     display: none;
@@ -1037,33 +1044,35 @@ textarea.form-control {
                 <div class="curriculum-section-item" data-section-id="{{ $section->id }}" data-order="{{ $section->order ?? $loop->index }}">
                     <div class="curriculum-section-header">
                         <div class="section-title">
-                            <i class="fa-solid fa-grip-lines"></i>
+                            <i class="fa-solid fa-grip-lines drag-handle"></i>
                             <span class="section-title-text">{{ $section->title }}</span>
                             <input type="text" class="section-title-input" value="{{ $section->title }}" style="display: none;">
                         </div>
                         <div class="section-actions">
                             <button class="btn-icon" onclick="editSection({{ $section->id }}, this)"><i class="fa-regular fa-pen-to-square"></i></button>
-                            <button class="btn-icon" onclick="duplicateSection({{ $section->id }})"><i class="fa-regular fa-copy"></i></button>
                             <button class="btn-icon danger" onclick="deleteSection({{ $section->id }})"><i class="fa-regular fa-trash-can"></i></button>
-                            <button class="btn-icon toggle-section"><i class="fa-regular fa-chevron-down"></i></button>
+                             <button class="btn-icon success" onclick="openAddLectureModal({{ $section->id }})" title="Add Lecture">
+                               <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button class="btn-icon toggle-section"><i class="fa-solid fa-chevron-down"></i></button>
                         </div>
                     </div>
                     
                     <div class="lecture-list">
-                        @forelse($section->lectures ?? [] as $lecture)
+                        @forelse($section->lessons  as $lesson)
                         <div class="lecture-item">
                             <div class="lecture-info">
-                                <i class="fa-regular fa-grip-vertical" style="color: var(--text-muted); cursor: move;"></i>
+                                <i class="fa-solid fa-grip-vertical" style="color: var(--text-muted); cursor: move;"></i>
                                 <i class="fa-regular fa-circle-play"></i>
-                                <span>{{ $lecture->title }}</span>
+                                <span>{{ $lesson->title }}</span>
                             </div>
                             <div class="lecture-meta">
                                 <div class="lecture-duration">
                                     <i class="fa-regular fa-clock"></i>
-                                    <span>{{ $lecture->duration ?? '10:00' }}</span>
+                                    <span>{{ $lesson->duration ?? '10:00' }}</span>
                                 </div>
-                                <button class="btn-icon"><i class="fa-regular fa-pen-to-square"></i></button>
-                                <button class="btn-icon danger"><i class="fa-regular fa-trash-can"></i></button>
+                                <button class="btn-icon" onclick="editLesson({{ $lesson->id }})"><i class="fa-regular fa-pen-to-square"></i></button>
+                                <button class="btn-icon danger" onclick="deleteLesson({{ $lesson->id }})"><i class="fa-regular fa-trash-can"></i></button>
                             </div>
                         </div>
                         @empty
@@ -1076,7 +1085,7 @@ textarea.form-control {
                         @endforelse
                         
                         <button class="add-lecture-btn" onclick="openAddLectureModal({{ $section->id }})">
-                            <i class="fa-regular fa-plus"></i> Add Lecture
+                            <i class="fa-regular fa-plus"></i> Add lesson
                         </button>
                     </div>
                 </div>
@@ -1339,7 +1348,7 @@ textarea.form-control {
     </div>
 </div>
 
-<!-- Add Section Modal -->
+<!-- Add Section Modal (KEEP THIS ONE - WITH course_id) -->
 <div id="addSectionModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -1349,29 +1358,6 @@ textarea.form-control {
         
         <form id="addSectionForm">
             @csrf
-            <div class="form-group">
-                <label>Section Title</label>
-                <input type="text" name="title" class="form-control" placeholder="e.g., Introduction to the Course" required>
-            </div>
-            
-            <div class="modal-footer">
-                <button type="button" class="btn-action secondary" onclick="closeAddSectionModal()">Cancel</button>
-                <button type="submit" class="btn-action primary">Create Section</button>
-            </div>
-        </form>
-    </div>
-</div>
-<!-- Add Section Modal -->
-<div id="addSectionModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Add New Section</h3>
-            <button class="modal-close" onclick="closeAddSectionModal()">&times;</button>
-        </div>
-        
-        <form id="addSectionForm">
-            @csrf
-            <!-- Add this hidden course_id field -->
             <input type="hidden" name="course_id" value="{{ $course->id }}">
             
             <div class="form-group">
@@ -1397,7 +1383,7 @@ textarea.form-control {
         
         <form id="editSectionForm">
             @csrf
-            @method('post')
+            @method('PUT')
             <input type="hidden" id="edit_section_id" name="section_id">
             <div class="form-group">
                 <label>Section Title</label>
@@ -1434,7 +1420,53 @@ textarea.form-control {
     </div>
 </div>
 
+<!-- Add Lesson Modal (if needed) -->
+<div id="addLessonModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Lesson</h3>
+            <button class="modal-close" onclick="closeAddLessonModal()">&times;</button>
+        </div>
+        
+        <form id="addLessonForm">
+            @csrf
+            <input type="hidden" id="lesson_section_id" name="section_id">
+            
+            <div class="form-group">
+                <label>Lesson Title</label>
+                <input type="text" name="title" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Content Type</label>
+                <select name="content_type" class="form-control" required>
+                    <option value="video">Video</option>
+                    <option value="article">Article</option>
+                    <option value="quiz">Quiz</option>
+                    <option value="assignment">Assignment</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Content URL</label>
+                <input type="text" name="content_url" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Duration (minutes)</label>
+                <input type="number" name="duration" class="form-control" required>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn-action secondary" onclick="closeAddLessonModal()">Cancel</button>
+                <button type="submit" class="btn-action primary">Create Lesson</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+// Tab switching
 function switchTab(tabId) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
@@ -1450,7 +1482,7 @@ function switchTab(tabId) {
     }
 }
 
-
+// Handle Add Section Form
 document.getElementById('addSectionForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     
@@ -1462,7 +1494,7 @@ document.getElementById('addSectionForm')?.addEventListener('submit', function(e
         body: formData,
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
     })
     .then(response => response.json())
@@ -1483,6 +1515,7 @@ document.getElementById('addSectionForm')?.addEventListener('submit', function(e
     });
 });
 
+// Initialize Sortable for drag and drop
 document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('curriculumContainer');
     if (container) {
@@ -1495,6 +1528,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Toggle section content
     document.addEventListener('click', function(e) {
         if (e.target.closest('.toggle-section')) {
             const sectionItem = e.target.closest('.curriculum-section-item');
@@ -1510,8 +1544,38 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Save section order after drag and drop
+function saveSectionOrder() {
+    const sections = [];
+    document.querySelectorAll('.curriculum-section-item').forEach((item, index) => {
+        sections.push({
+            id: item.dataset.sectionId,
+            order: index
+        });
+    });
+    
+    fetch('/instructor/sections/reorder', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ sections: sections })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Optional: show notification
+            // showNotification('Section order saved', 'success');
+        }
+    })
+    .catch(error => {
+        console.error('Error saving order:', error);
+    });
+}
 
-
+// Section Modal Functions
 function openAddSectionModal() {
     document.getElementById('addSectionModal').classList.add('active');
 }
@@ -1520,8 +1584,6 @@ function closeAddSectionModal() {
     document.getElementById('addSectionModal').classList.remove('active');
     document.getElementById('addSectionForm').reset();
 }
-
-
 
 function editSection(sectionId, button) {
     const sectionItem = button.closest('.curriculum-section-item');
@@ -1549,7 +1611,8 @@ document.getElementById('editSectionForm')?.addEventListener('submit', function(
         method: 'POST',
         body: formData,
         headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
     })
     .then(response => response.json())
@@ -1560,10 +1623,10 @@ document.getElementById('editSectionForm')?.addEventListener('submit', function(
             const titleSpan = sectionItem.querySelector('.section-title-text');
             titleSpan.textContent = data.section.title;
             
-            showNotification(data.message, 'success');
+            showNotification(data.message || 'Section updated successfully', 'success');
             closeEditSectionModal();
         } else {
-            showNotification(data.message, 'error');
+            showNotification(data.message || 'Error updating section', 'error');
         }
     })
     .catch(error => {
@@ -1583,7 +1646,6 @@ function closeDeleteSectionModal() {
 }
 
 // Handle Delete Section Form
-// Handle Delete Section Form
 document.getElementById('deleteSectionForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     
@@ -1593,7 +1655,7 @@ document.getElementById('deleteSectionForm')?.addEventListener('submit', functio
     fetch(`/sections/${sectionId}`, {
         method: 'DELETE',
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             'X-Requested-With': 'XMLHttpRequest'
         }
     })
@@ -1623,33 +1685,57 @@ document.getElementById('deleteSectionForm')?.addEventListener('submit', functio
     });
 });
 
-// Duplicate Section
-function duplicateSection(sectionId) {
-    fetch(`/instructor/sections/${sectionId}/duplicate`, {
+// Lecture Functions
+function openAddLectureModal(sectionId) {
+    document.getElementById('lesson_section_id').value = sectionId;
+    document.getElementById('addLessonModal').classList.add('active');
+}
+
+function closeAddLessonModal() {
+    document.getElementById('addLessonModal').classList.remove('active');
+    document.getElementById('addLessonForm').reset();
+}
+
+// Handle Add Lesson Form
+document.getElementById('addLessonForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch(`/Lessons`, {
         method: 'POST',
+        body: formData,
         headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'X-Requested-With': 'XMLHttpRequest'
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            location.reload();
-            showNotification('Section duplicated successfully', 'success');
+        if (data) {
+            closeAddLessonModal();
+            showNotification('Lesson created successfully', 'success');
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
         } else {
-            showNotification(data.message, 'error');
+            showNotification('Error creating lesson', 'error');
         }
     })
     .catch(error => {
-        showNotification('Error duplicating section', 'error');
+        showNotification('Error creating lesson', 'error');
         console.error('Error:', error);
     });
+});
+
+function editLecture(lectureId) {
+    showNotification('Edit lecture functionality coming soon', 'info');
 }
 
-// Lecture Functions (placeholder)
-function openAddLectureModal(sectionId) {
-    showNotification('Add lecture functionality coming soon', 'info');
+function deleteLecture(lectureId) {
+    if (confirm('Are you sure you want to delete this lecture?')) {
+        showNotification('Delete lecture functionality coming soon', 'info');
+    }
 }
 
 // Course Actions
@@ -1658,7 +1744,7 @@ function publishCourse(courseId) {
         fetch(`/instructor/courses/${courseId}/publish`, {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
@@ -1677,7 +1763,7 @@ function unpublishCourse(courseId) {
         fetch(`/instructor/courses/${courseId}/unpublish`, {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
@@ -1698,7 +1784,7 @@ function editTitle(courseId) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
             body: JSON.stringify({ title: newTitle })
         })
@@ -1712,13 +1798,18 @@ function editTitle(courseId) {
     }
 }
 
-
+function saveSettings(event) {
+    event.preventDefault();
+    showNotification('Settings saved successfully', 'success');
+}
 
 function resetSettings() {
     if (confirm('Discard all changes?')) {
         location.reload();
     }
 }
+
+
 
 // Student Functions
 function searchStudents() {
@@ -1733,7 +1824,9 @@ function searchStudents() {
 
 document.getElementById('searchStudents')?.addEventListener('input', searchStudents);
 
-
+function exportStudents() {
+    showNotification('Export feature coming soon', 'info');
+}
 
 function loadMoreStudents() {
     showNotification('Loading more students...', 'info');
@@ -1750,14 +1843,15 @@ function viewStudentProgress(studentId) {
 // Analytics Functions
 function initCharts() {
     // Destroy existing charts if any
-    Chart.helpers.each(Chart.instances, function(instance) {
-        instance.destroy();
-    });
+    if (window.enrollmentChart) window.enrollmentChart.destroy();
+    if (window.completionChart) window.completionChart.destroy();
+    if (window.quizChart) window.quizChart.destroy();
+    if (window.trafficChart) window.trafficChart.destroy();
     
     // Enrollment Chart
     const ctx1 = document.getElementById('enrollmentChart')?.getContext('2d');
     if (ctx1) {
-        new Chart(ctx1, {
+        window.enrollmentChart = new Chart(ctx1, {
             type: 'line',
             data: {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -1795,7 +1889,7 @@ function initCharts() {
     // Completion Chart
     const ctx2 = document.getElementById('completionChart')?.getContext('2d');
     if (ctx2) {
-        new Chart(ctx2, {
+        window.completionChart = new Chart(ctx2, {
             type: 'doughnut',
             data: {
                 labels: ['Completed', 'In Progress', 'Not Started'],
@@ -1820,7 +1914,7 @@ function initCharts() {
     // Quiz Chart
     const ctx3 = document.getElementById('quizChart')?.getContext('2d');
     if (ctx3) {
-        new Chart(ctx3, {
+        window.quizChart = new Chart(ctx3, {
             type: 'bar',
             data: {
                 labels: ['Quiz 1', 'Quiz 2', 'Quiz 3', 'Quiz 4'],
@@ -1856,7 +1950,7 @@ function initCharts() {
     // Traffic Chart
     const ctx4 = document.getElementById('trafficChart')?.getContext('2d');
     if (ctx4) {
-        new Chart(ctx4, {
+        window.trafficChart = new Chart(ctx4, {
             type: 'pie',
             data: {
                 labels: ['Direct', 'Search', 'Social', 'Email'],
@@ -1883,6 +1977,7 @@ function updateAnalytics() {
     const period = document.getElementById('analyticsPeriod').value;
     showNotification(`Updating analytics for last ${period} days...`, 'info');
     // Here you would fetch new data and update charts
+    initCharts();
 }
 
 // Promotions Functions

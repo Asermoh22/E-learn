@@ -6,6 +6,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardInstructorController;
 use App\Http\Controllers\DashboardStudentController;
 use App\Http\Controllers\SectionController;
+use App\Http\Controllers\LessonController;
 
 
 
@@ -29,6 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::resource('Lessons', LessonController::class)->middleware('auth');
 
 Route::get('/', function () {
     return view('landing');

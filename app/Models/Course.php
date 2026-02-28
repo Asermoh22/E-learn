@@ -38,4 +38,8 @@ class Course extends Model
     public function sections(){
         return $this->hasMany(Section::class);
     }
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class);
+    }
 }
