@@ -3,54 +3,6 @@
 @section('title', 'Create Account')
 
 @section('content')
-<div class="auth-wrapper">
-    <div class="auth-card">
-        <div class="nav-logo" style="justify-content: center; margin-bottom: 24px;">
-            <i class="fa-solid fa-lines-leaning" style="color: #E44320;"></i>
-            <span class="logo-text">E<span class="accent">Learn</span></span>
-        </div>
-        <h2>Create Account</h2>
-        <p class="subtitle">Join us today to get started with your account.</p>
-        
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
-            
-            <div class="input-group">
-                <label>Full Name</label>
-                <input type="text" name="name" required placeholder="John Doe">
-            </div>
-
-            <div class="input-group">
-                <label>Email Address</label>
-                <input type="email" name="email" required placeholder="name@company.com">
-            </div>
-
-           <div class="input-group">
-                <label for="role">Role</label>
-                <select name="role" id="role" required>
-                    <option value="" disabled selected>Select your role</option>
-                    <option value="student">Student</option>
-                    <option value="instructor">Instructor</option>
-                </select>
-            </div>
-            
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" name="password" required placeholder="••••••••">
-            </div>
-
-            <div class="input-group">
-                <label>Confirm Password</label>
-                <input type="password" name="password_confirmation" required placeholder="••••••••">
-            </div>
-            
-            <button type="submit" class="btn-primary">Create Account</button>
-        </form>
-        
-        <p class="footer-text">Already have an account? <a href="{{ route('login') }}">Sign In</a></p>
-    </div>
-</div>
-
 <style>
 /* Shared Styles */
 body {
@@ -207,4 +159,52 @@ body {
     text-decoration: underline;
 }
 </style>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="nav-logo" style="justify-content: center; margin-bottom: 24px;">
+            <i class="fa-solid fa-lines-leaning" style="color: #E44320;"></i>
+            <span class="logo-text">E<span class="accent">Learn</span></span>
+        </div>
+        <h2>Create Account</h2>
+        <p class="subtitle">Join us today to get started with your account.</p>
+        
+        <form method="POST" action="{{ route('register') }}">
+            @csrf
+            
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" name="name" required placeholder="John Doe">
+            </div>
+
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" name="email" required placeholder="name@company.com">
+            </div>
+
+           <div class="input-group">
+                <label for="role">Role</label>
+                <select name="role" id="role" required>
+                    <option value="" disabled selected>Select your role</option>
+                    <option value="student">Student</option>
+                    <option value="instructor">Instructor</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" name="password" required placeholder="••••••••">
+            </div>
+
+            <div class="input-group">
+                <label>Confirm Password</label>
+                <input type="password" name="password_confirmation" required placeholder="••••••••">
+            </div>
+            
+            <button type="submit" class="btn-primary">Create Account</button>
+        </form>
+        
+        <p class="footer-text">Already have an account? <a href="{{ route('login') }}">Sign In</a></p>
+    </div>
+</div>
+
 @endsection

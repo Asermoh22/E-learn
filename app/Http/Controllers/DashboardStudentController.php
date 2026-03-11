@@ -11,9 +11,9 @@ class DashboardStudentController extends Controller
 {
     public function index(Request $request)
     {
-        $categoryFilter = $request->query('category'); // e.g., ?category=web
+        $categoryFilter = $request->query('category'); 
         
-        $coursesQuery = Course::with('category', 'instructor.user');
+        $coursesQuery = Course::where('status', 'published')->with('category', 'instructor.user');
 
         if ($categoryFilter && $categoryFilter !== 'all') {
                 $coursesQuery->whereHas('category', function ($q) use ($categoryFilter) {

@@ -30,6 +30,7 @@ class CourseService
             'level'         => $data['level'],
             'duration'      => $data['duration'],
             'image'         => $data['image'] ?? null,
+            'status'        => 'pending',
         ]);
     }
 
@@ -41,6 +42,51 @@ class CourseService
     public function sectionCount(int $courseId)
     {
         return $this->courseRepo->sectioncount($courseId);
+    }
+
+    public function update(int $id, array $data){
+        return $this->courseRepo->update($id, $data);
+    }
+
+    public function submitForReview(int $courseId)
+    {
+        return $this->courseRepo->update($courseId, [
+            'status' => 'pending'
+        ]);
+    }
+
+    public function approveCourse(int $courseId)
+    {
+        return $this->courseRepo->update($courseId, [
+            'status' => 'approved'
+        ]);
+    }
+
+    public function rejectCourse(int $courseId)
+    {
+        return $this->courseRepo->update($courseId, [
+            'status' => 'rejected'
+        ]);
+    }
+
+    public function pendingCourse(int $courseId)
+    {
+        return $this->courseRepo->update($courseId, [
+            'status' => 'pending'
+        ]);
+    }
+
+    public function publishCourse(int $courseId)
+    {
+        $course = $this->courseRepo->find($courseId);
+
+        if ($course->status !== 'approved') {
+            throw new \Exception("Cannot publish a course that is not approved.");
+        }
+
+        return $this->courseRepo->update($courseId, [
+            'status' => 'published'
+        ]);
     }
 
     

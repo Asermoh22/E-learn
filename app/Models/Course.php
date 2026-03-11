@@ -14,7 +14,8 @@ class Course extends Model
         'duration',
         'instructor_id',
         'category_id',
-        'image'
+        'image',
+        'status'
     ];
 
     public static function totalCourses()

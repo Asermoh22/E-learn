@@ -27,5 +27,12 @@ class CourseRepo
     {
         return $this->model->findorfail($courseId)->sections()->count();
     }
+
+    public function update(int $id, array $data)
+    {
+        $course = $this->model->findorfail($id);
+        $course->update($data);
+        return $course;
+    }
     
 }

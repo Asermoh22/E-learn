@@ -7,13 +7,21 @@ use App\Http\Controllers\DashboardInstructorController;
 use App\Http\Controllers\DashboardStudentController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\AdminController;
 
 
 
 
 
 
+Route::prefix('admin')->middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::patch('/courses/{course}/approve', [AdminController::class, 'approveCourse'])->name('admin.courses.approve');
+    Route::patch('/courses/{course}/reject', [AdminController::class, 'rejectCourse'])->name('admin.courses.reject');
+    Route::patch('/courses/{course}/publish', [AdminController::class, 'publishCourse'])->name('admin.courses.publish');
+    Route::patch('/courses/{course}/Pending', [AdminController::class, 'PendingCourse'])->name('admin.courses.Pending');
 
+});
 Route::get('/dashboard/instructor', [DashboardInstructorController::class, 'index'])->middleware(['auth', 'verified'])->name('instructor.dashboard');
 Route::get('/dashboard/student', [DashboardStudentController::class, 'index'] )->middleware(['auth', 'verified'])->name('student.dashboard');
 

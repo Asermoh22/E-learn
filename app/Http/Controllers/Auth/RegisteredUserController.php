@@ -43,9 +43,9 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'role' => ['required', 'in:instructor,student'], // Added validation for allowed roles
+            'role' => ['required', 'in:instructor,student'], 
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'bio' => ['nullable', 'string', 'max:1000'], // Added validation for bio
+            'bio' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $user = User::create([
@@ -62,14 +62,16 @@ class RegisteredUserController extends Controller
                 'total_earnings' => 0,
             ]);
             return redirect(route('instructor.dashboard', absolute: false));
-        } else {
+        } elseif ($request->role === 'student') {
             $this->studentService->create(['user_id' => $user->id]);
+        }else {
+            return redirect(route('admin.dashboard', absolute: false));
         }
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('student.dashboard', absolute: false));
     }
 }

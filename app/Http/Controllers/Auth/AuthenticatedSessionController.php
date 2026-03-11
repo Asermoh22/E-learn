@@ -28,15 +28,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
         
-         $user = Auth::user(); // جلب المستخدم بعد تسجيل الدخول
+        $user = Auth::user();
 
-    // توجيه حسب الدور
-    if ($user->role === 'instructor') {
-        return redirect()->route('instructor.dashboard'); // صفحة المدرس
-    } elseif ($user->role === 'student') {
-        return redirect()->route('student.dashboard'); // صفحة الطالب
-    }
-        return redirect()->intended(route('dashboard', absolute: false));
+        if ($user->role === 'instructor') {
+            return redirect()->route('instructor.dashboard'); 
+        } elseif ($user->role === 'student') {
+            return redirect()->route('student.dashboard'); 
+        }
+            return redirect()->intended(route('admin.dashboard', absolute: false));
     }
 
     /**

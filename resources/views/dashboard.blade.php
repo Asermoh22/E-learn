@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'E-Learn | Professional Dashboard')
+@section('title', 'E-Learn | Admin Dashboard')
 
 @section('content')
 
@@ -23,6 +23,10 @@
     --card-radius: 32px;
     --border-color: rgba(255,255,255,0.05);
     --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #3b82f6;
 }
 
 * {
@@ -170,6 +174,9 @@ body {
     gap: 14px;
     transition: 0.3s;
     border: 1px solid rgba(255,77,77,0.1);
+    background: transparent;
+    cursor: pointer;
+    font-size: 16px;
 }
 
 #sidebar form button:hover {
@@ -426,8 +433,8 @@ body {
     font-size: 14px;
 }
 
-/* Hero Card - Redesigned */
-.pro-hero-card {
+/* Admin Hero Card */
+.admin-hero-card {
     background: linear-gradient(135deg, var(--surface) 0%, #1A1A1A 100%);
     border-radius: var(--card-radius);
     padding: 50px;
@@ -484,34 +491,6 @@ body {
     font-size: 18px;
     margin-bottom: 30px;
     line-height: 1.6;
-}
-
-.hero-stats-mini {
-    display: flex;
-    gap: 30px;
-}
-
-.hero-stat-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.hero-stat-item i {
-    font-size: 24px;
-    color: var(--brand-main);
-}
-
-.hero-stat-item div p {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 700;
-    color: white;
-}
-
-.hero-stat-item div span {
-    font-size: 12px;
-    color: var(--text-muted);
 }
 
 /* Quick Actions */
@@ -602,15 +581,15 @@ body {
     gap: 12px;
 }
 
-/* Categories - Modern */
-.cat-shelf {
+/* Status Filters */
+.status-filters {
     display: flex;
     gap: 10px;
     margin-bottom: 30px;
     flex-wrap: wrap;
 }
 
-.cat-btn {
+.filter-btn {
     padding: 12px 24px;
     border-radius: 14px;
     border: 1px solid var(--border-color);
@@ -625,32 +604,32 @@ body {
     gap: 8px;
 }
 
-.cat-btn i {
+.filter-btn i {
     font-size: 16px;
 }
 
-.cat-btn:hover {
+.filter-btn:hover {
     background: rgba(228,67,32,0.1);
     color: var(--brand-main);
     border-color: var(--brand-main);
 }
 
-.cat-btn.active {
+.filter-btn.active {
     background: var(--brand-gradient);
     color: white;
     border-color: transparent;
     box-shadow: 0 10px 20px rgba(228,67,32,0.2);
 }
 
-/* Course Grid */
-.course-grid {
+/* Course Review Grid */
+.review-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 30px;
     margin-bottom: 50px;
 }
 
-.course-item {
+.review-card {
     background: var(--surface);
     border-radius: 28px;
     overflow: hidden;
@@ -659,49 +638,46 @@ body {
     position: relative;
 }
 
-.course-item:hover {
+.review-card:hover {
     transform: translateY(-10px);
     box-shadow: var(--shadow-xl);
     border-color: rgba(228,67,32,0.2);
 }
 
-.course-badge {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: var(--brand-gradient);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 100px;
-    font-size: 12px;
+.review-header {
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.review-header h3 {
+    font-size: 18px;
     font-weight: 700;
-    z-index: 1;
-    box-shadow: 0 5px 15px rgba(228,67,32,0.3);
+    margin: 0;
 }
 
-.course-thumb {
+.review-thumb {
     width: 100%;
-    height: 200px;
+    height: 180px;
     object-fit: cover;
-    transition: 0.4s;
 }
 
-.course-item:hover .course-thumb {
-    transform: scale(1.05);
-}
-
-.course-body {
+.review-body {
     padding: 25px;
 }
 
-.course-meta {
+.review-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-.course-category {
+.review-category {
     color: var(--brand-main);
     font-weight: 600;
     font-size: 13px;
@@ -710,167 +686,270 @@ body {
     border-radius: 100px;
 }
 
-.course-stats {
+.review-stats {
     display: flex;
     gap: 15px;
     color: var(--text-muted);
     font-size: 13px;
 }
 
-.course-stats i {
+.review-stats i {
     margin-right: 4px;
 }
 
-.course-body h4 {
+.review-body h4 {
     font-size: 20px;
     font-weight: 700;
     margin: 0 0 10px 0;
     line-height: 1.3;
 }
 
-.course-body p {
+.review-description {
     color: var(--text-muted);
     font-size: 14px;
     line-height: 1.6;
     margin-bottom: 20px;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 6px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 100px;
-    margin-bottom: 20px;
+    max-height: 80px;
     overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.progress-fill {
-    height: 100%;
-    background: var(--brand-gradient);
-    border-radius: 100px;
-    width: 75%;
-}
-
-.course-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.instructor {
+.instructor-info {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 16px;
 }
 
-.instructor img {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
+.instructor-info i {
+    font-size: 24px;
+    color: var(--brand-main);
 }
 
-.instructor span {
-    font-size: 13px;
+.instructor-info div {
+    flex: 1;
+}
+
+.instructor-info div p {
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.instructor-info div span {
+    font-size: 12px;
     color: var(--text-muted);
 }
 
-.btn-course {
-    background: transparent;
-    color: var(--text-main);
-    padding: 10px 20px;
-    border-radius: 12px;
+.review-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-approve {
+    flex: 1;
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    padding: 12px;
+    border-radius: 14px;
     text-decoration: none;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 14px;
+    transition: 0.3s;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.btn-approve:hover {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+}
+
+.btn-pending {
+    flex: 1;
+    background: rgba(245, 158, 11, 0.1);  /* Amber/warning color with opacity */
+    color: #f59e0b;  /* Amber color */
+    padding: 12px;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: 0.3s;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn-pending:hover {
+    background: #f59e0b;  /* Solid amber */
+    color: white;
+    border-color: #f59e0b;
+}
+
+/* Optional: If you want to keep the star icon instead of clock */
+.btn-pending i {
+    font-size: 16px;
+}
+.btn-reject {
+    flex: 1;
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    padding: 12px;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: 0.3s;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.btn-reject:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+}
+
+
+
+.btn-view {
+    flex: 1;
+    background: transparent;
+    color: var(--text-main);
+    padding: 12px;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
     transition: 0.3s;
     border: 1px solid var(--border-color);
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+    cursor: pointer;
 }
 
-.btn-course:hover {
-    background: var(--brand-main);
+.btn-view:hover {
+    background: rgba(255,255,255,0.05);
     border-color: var(--brand-main);
 }
 
-/* Activity Section */
-.activity-section {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 30px;
-    margin-bottom: 50px;
-}
-
-.activity-card {
-    background: var(--surface);
-    border-radius: 28px;
-    padding: 30px;
-    border: 1px solid var(--border-color);
-}
-
-.activity-header {
-    display: flex;
-    justify-content: space-between;
+/* Status Badges */
+.status-badge {
+    display: inline-flex;
     align-items: center;
-    margin-bottom: 25px;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
 }
 
-.activity-header h3 {
-    font-size: 20px;
-    font-weight: 700;
+.status-pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+    border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
-.activity-list {
-    display: flex;
-    flex-direction: column;
+.status-approved {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-rejected {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.status-published {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--info);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Quick Stats Cards */
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);  /* Changed from 4 to 5 */
     gap: 20px;
+    margin-bottom: 40px;
 }
 
-.activity-item {
+/* Rest of your CSS remains the same */
+.stat-item {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 20px;
     display: flex;
     align-items: center;
     gap: 15px;
-    padding: 15px;
-    background: rgba(255,255,255,0.02);
-    border-radius: 18px;
-    transition: 0.3s;
+    border: 1px solid var(--border-color);
 }
 
-.activity-item:hover {
-    background: rgba(255,255,255,0.04);
-}
-
-.activity-avatar {
-    width: 45px;
-    height: 45px;
+.stat-item-icon {
+    width: 50px;
+    height: 50px;
     border-radius: 16px;
-    background: rgba(228,67,32,0.1);
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 22px;
+}
+
+.stat-item-icon.pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.stat-item-icon.approved {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.stat-item-icon.rejected {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+}
+
+/* Added published icon style */
+.stat-item-icon.published {
+    background: rgba(245, 31, 11, 0.1);  /* Or choose a different color */
+    color: #f5460b;
+}
+
+.stat-item-icon.total {
+    background: rgba(228, 67, 32, 0.1);
     color: var(--brand-main);
-    font-size: 18px;
 }
 
-.activity-details {
-    flex: 1;
+.stat-item-info h4 {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 4px;
 }
 
-.activity-details p {
-    margin-bottom: 5px;
-    font-weight: 500;
-}
-
-.activity-details span {
+.stat-item-info p {
     color: var(--text-muted);
-    font-size: 12px;
-}
-
-.activity-time {
-    color: var(--text-muted);
-    font-size: 12px;
+    font-size: 13px;
 }
 
 /* Toggle Button */
@@ -898,6 +977,65 @@ body {
     transform: scale(1.1) rotate(90deg);
 }
 
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--surface);
+    border-radius: var(--card-radius);
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.modal-close:hover {
+    color: var(--brand-main);
+}
+
+.modal h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.modal p {
+    color: var(--text-muted);
+    margin-bottom: 30px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
     .stats-grid {
@@ -906,8 +1044,8 @@ body {
     .quick-actions {
         grid-template-columns: repeat(2, 1fr);
     }
-    .activity-section {
-        grid-template-columns: 1fr;
+    .quick-stats {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -927,6 +1065,9 @@ body {
     .nav-actions {
         gap: 10px;
     }
+    .review-grid {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 
@@ -936,16 +1077,17 @@ body {
 <!-- Sidebar -->
 <div id="sidebar">
     <a href="#" class="brand-side">
-        E-Learn <span>PRO</span>
+        E-Learn <span>ADMIN</span>
     </a>
     
     <div class="sidebar-menu">
         <a href="#" class="active"><i class="fa-solid fa-house"></i> Dashboard</a>
-        <a href="{{ route('add-course') }}"><i class="fa-solid fa-plus-circle"></i> Add Course</a>
-        <a href="#"><i class="fa-solid fa-book-open"></i> My Courses</a>
-        <a href="#"><i class="fa-solid fa-users"></i> Students</a>
+        <a href="#"><i class="fa-solid fa-book-open"></i> All Courses</a>
+        <a href="#"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="#"><i class="fa-solid fa-clock"></i> Pending Reviews</a>
+        <a href="#"><i class="fa-solid fa-check-circle"></i> Approved</a>
+        <a href="#"><i class="fa-solid fa-times-circle"></i> Rejected</a>
         <a href="#"><i class="fa-solid fa-chart-line"></i> Analytics</a>
-        <a href="#"><i class="fa-solid fa-credit-card"></i> Earnings</a>
         <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
     </div>
 
@@ -961,19 +1103,19 @@ body {
 <div class="main-layout">
     <!-- Navbar -->
     <nav class="nav-bar">
-        <div class="brand">E-Learn</div>
+        <div class="brand">E-Learn Admin</div>
         
         <div class="nav-actions">
             <div class="nav-icon">
                 <i class="fa-regular fa-message"></i>
-                <span class="notification-badge">3</span>
+                <span class="notification-badge">8</span>
             </div>
             <div class="nav-icon">
                 <i class="fa-regular fa-bell"></i>
-                <span class="notification-badge">5</span>
+                <span class="notification-badge">12</span>
             </div>
             <div class="user-pill">
-                <img src="{{ asset('images/default-profile.png') }}" alt="Profile">
+                <img src="{{ asset('images/admin-profile.png') }}" alt="Profile">
                 <span style="font-weight: 600;">{{ Auth::user()->name }}</span>
                 <i class="fa-solid fa-chevron-down" style="font-size: 12px; color: var(--text-muted);"></i>
             </div>
@@ -983,299 +1125,289 @@ body {
     <!-- Dashboard Header -->
     <div class="dashboard-header">
         <div class="header-title">
-            <h1>Welcome back, {{ Auth::user()->name }}! 👋</h1>
-            <p>Here's what's happening with your courses today.</p>
+            <h1>Admin Dashboard, {{ Auth::user()->name }}! 🔐</h1>
+            <p>Manage and review all courses on the platform.</p>
         </div>
         <div class="header-actions">
             <a href="#" class="btn-secondary">
-                <i class="fa-regular fa-calendar"></i> Schedule
+                <i class="fa-regular fa-file-pdf"></i> Export Report
             </a>
-            <a href="{{ route('add-course') }}" class="btn-primary">
-                <i class="fa-solid fa-plus"></i> Create Course
+            <a href="#" class="btn-primary">
+                <i class="fa-solid fa-plus"></i> Add Admin
             </a>
         </div>
     </div>
 
-    <!-- Stats Grid -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-icon"><i class="fa-solid fa-book-open"></i></div>
-                <span class="stat-change">{{ $percentChange }}%</span>
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+        <div class="stat-item">
+            <div class="stat-item-icon pending">
+                <i class="fa-regular fa-clock"></i>
             </div>
-            <div class="stat-number">{{ $count }}</div>
-            <div class="stat-label">Total Courses</div>
+            <div class="stat-item-info">
+                <h4>{{ $pendingCount ?? 0 }}</h4>
+                <p>Pending Review</p>
+            </div>
         </div>
         
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
-                <span class="stat-change">+23%</span>
+        <div class="stat-item">
+            <div class="stat-item-icon approved">
+                <i class="fa-regular fa-check-circle"></i>
             </div>
-            <div class="stat-number">1,234</div>
-            <div class="stat-label">Enrolled Students</div>
+            <div class="stat-item-info">
+                <h4>{{ $approvedCount ?? 0 }}</h4>
+                <p>Approved</p>
+            </div>
         </div>
         
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-icon"><i class="fa-solid fa-dollar-sign"></i></div>
-                <span class="stat-change">+8%</span>
+        <div class="stat-item">
+            <div class="stat-item-icon rejected">
+                <i class="fa-regular fa-times-circle"></i>
             </div>
-            <div class="stat-number">$12.4k</div>
-            <div class="stat-label">Monthly Revenue</div>
+            <div class="stat-item-info">
+                <h4>{{ $rejectedCount ?? 0 }}</h4>
+                <p>Rejected</p>
+            </div>
+        </div>
+
+       <div class="stat-item">
+            <div class="stat-item-icon published">
+                <i class="fa-solid fa-fire"></i>
+            </div>
+            <div class="stat-item-info">
+                <h4>{{ $publishedCount ?? 0 }}</h4>
+                <p>Published</p>
+            </div>
         </div>
         
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
-                <span class="stat-change">4.8</span>
+        <div class="stat-item">
+            <div class="stat-item-icon total">
+                <i class="fa-regular fa-book-open"></i>
             </div>
-            <div class="stat-number">98%</div>
-            <div class="stat-label">Satisfaction Rate</div>
+            <div class="stat-item-info">
+                <h4>{{ $totalCourses ?? 0 }}</h4>
+                <p>Total Courses</p>
+            </div>
         </div>
     </div>
 
-    <!-- Professional Hero Card -->
-    <section class="pro-hero-card">
+    <!-- Admin Hero Card -->
+    <section class="admin-hero-card">
         <div class="hero-pattern"></div>
         <div class="hero-content">
             <div class="hero-badge">
-                <i class="fa-solid fa-bolt"></i>
-                INSTRUCTOR SPOTLIGHT
+                <i class="fa-solid fa-shield"></i>
+                ADMIN ACCESS
             </div>
-            <h1>Your courses are <span>trending</span> this week</h1>
-            <p>Your Advanced Web Development course has seen a 45% increase in enrollment. Keep up the great work!</p>
+            <h1>Course <span>Reviews</span> Pending</h1>
+            <p>You have {{ $pendingCount ?? 0 }} courses waiting for your review. Review them now to maintain quality standards.</p>
             
-            <div class="hero-stats-mini">
-                <div class="hero-stat-item">
-                    <i class="fa-solid fa-eye"></i>
-                    <div>
-                        <p>2.4k</p>
-                        <span>Views</span>
-                    </div>
-                </div>
-                <div class="hero-stat-item">
-                    <i class="fa-solid fa-user-plus"></i>
-                    <div>
-                        <p>156</p>
-                        <span>New Students</span>
-                    </div>
-                </div>
-                <div class="hero-stat-item">
-                    <i class="fa-solid fa-comment"></i>
-                    <div>
-                        <p>48</p>
-                        <span>Reviews</span>
-                    </div>
-                </div>
-            </div>
+            <a href="#pending-reviews" class="btn-primary" style="display: inline-flex;">
+                <i class="fa-regular fa-eye"></i> Review Now
+            </a>
         </div>
     </section>
 
     <!-- Quick Actions -->
-    <div class="quick-actions">
+    {{-- <div class="quick-actions">
         <a href="#" class="action-card">
-            <div class="action-icon"><i class="fa-solid fa-video"></i></div>
-            <h4>Upload Lecture</h4>
-            <p>Add new course content</p>
+            <div class="action-icon"><i class="fa-regular fa-clock"></i></div>
+            <h4>Pending Reviews</h4>
+            <p>{{ $pendingCount ?? 0 }} courses to review</p>
         </a>
         <a href="#" class="action-card">
-            <div class="action-icon"><i class="fa-solid fa-pen"></i></div>
-            <h4>Create Quiz</h4>
-            <p>Test student knowledge</p>
+            <div class="action-icon"><i class="fa-regular fa-check-circle"></i></div>
+            <h4>Approved</h4>
+            <p>{{ $publishedCount ?? 0 }} live courses</p>
         </a>
         <a href="#" class="action-card">
-            <div class="action-icon"><i class="fa-solid fa-message"></i></div>
-            <h4>Announcement</h4>
-            <p>Message your students</p>
+            <div class="action-icon"><i class="fa-regular fa-users"></i></div>
+            <h4>Users</h4>
+            <p>Manage instructors</p>
         </a>
         <a href="#" class="action-card">
-            <div class="action-icon"><i class="fa-solid fa-chart-simple"></i></div>
+            <div class="action-icon"><i class="fa-regular fa-chart-line"></i></div>
             <h4>Analytics</h4>
-            <p>View detailed reports</p>
+            <p>Platform insights</p>
         </a>
-    </div>
+    </div> --}}
 
-    <!-- Categories -->
+    <!-- Status Filters -->
     <div class="section-header">
-        <h2>Your Course Library <span>({{ $count }} courses)</span></h2>
+        <h2>Course Review Queue <span>Manage course approvals</span></h2>
         <a href="#" class="view-all">View All <i class="fa-solid fa-arrow-right"></i></a>
     </div>
     
-    <section class="cat-shelf">
-        <button class="cat-btn active" onclick="filterCategory('all')">
+    <section class="status-filters">
+        <button class="filter-btn active" onclick="filterStatus('all')">
             <i class="fa-solid fa-layer-group"></i> All Courses
         </button>
-        <button class="cat-btn" onclick="filterCategory('web')">
-            <i class="fa-solid fa-code"></i> Development
+        <button class="filter-btn" onclick="filterStatus('pending')">
+            <i class="fa-regular fa-clock"></i> Pending
         </button>
-        <button class="cat-btn" onclick="filterCategory('data')">
-            <i class="fa-solid fa-chart-line"></i> Data Science
+        <button class="filter-btn" onclick="filterStatus('approved')">
+            <i class="fa-regular fa-check-circle"></i> Approved
         </button>
-        <button class="cat-btn" onclick="filterCategory('marketing')">
-            <i class="fa-solid fa-bullhorn"></i> Marketing
+        <button class="filter-btn" onclick="filterStatus('rejected')">
+            <i class="fa-regular fa-times-circle"></i> Rejected
         </button>
-        <button class="cat-btn" onclick="filterCategory('design')">
-            <i class="fa-solid fa-paint-brush"></i> Design
+        <button class="filter-btn" onclick="filterStatus('published')">
+            <i class="fa-regular fa-star"></i> Published
         </button>
     </section>
 
-   <section class="course-grid">
-    @foreach($courses as $course)
-    <a href="{{ route('courses.show',$course->id) }}">
-        <div class="course-item" data-category="{{ $course->category->name ?? 'General' }}">
-           <span class="course-badge">
-                @if($course->status == 'published')
-                    <i class="fa-solid fa-fire"></i> Published
-                @elseif($course->status == 'draft')
-                    <i class="fa-regular fa-clock"></i> Draft
+    <!-- Course Review Grid -->
+    <section class="review-grid" id="course-review-grid">
+        @foreach($courses as $course)
+        <div class="review-card" data-status="{{ $course->status }}">
+            <div class="review-header">
+                <h3>Course Review</h3>
+                @if($course->status == 'pending')
+                    <span class="status-badge status-pending">
+                        <i class="fa-regular fa-clock"></i> Pending
+                    </span>
                 @elseif($course->status == 'approved')
-                    <i class="fa-regular fa-star"></i> Approved
+                    <span class="status-badge status-approved">
+                        <i class="fa-regular fa-check-circle"></i> Approved
+                    </span>
                 @elseif($course->status == 'rejected')
-                    <i class="fa-regular fa-ban"></i> Rejected
-                @elseif($course->status == 'pending')
-                    <i class="fa-regular fa-hourglass-half"></i> Pending
+                    <span class="status-badge status-rejected">
+                        <i class="fa-regular fa-times-circle"></i> Rejected
+                    </span>
+                @elseif($course->status == 'published')
+                    <span class="status-badge status-published">
+                        <i class="fa-regular fa-star"></i> Published
+                    </span>
                 @endif
-            </span>
+            </div>
+            
             <img src="{{ $course->image 
                         ? asset('storage/' . $course->image) 
                         : asset('images/default-course.jpg') }}" 
-                class="course-thumb">
+                class="review-thumb">
 
-            <div class="course-body">
-                <div class="course-meta">
-                    <span class="course-category">{{ $course->category->name ?? 'General' }}</span>
-                    <div class="course-stats">
+            <div class="review-body">
+                <div class="review-meta">
+                    <span class="review-category">{{ $course->category->name ?? 'General' }}</span>
+                    <div class="review-stats">
                         <span><i class="fa-regular fa-eye"></i> {{ $course->views ?? 0 }}</span>
                         <span><i class="fa-regular fa-star"></i> {{ $course->rating ?? '0.0' }}</span>
                     </div>
                 </div>
+                
                 <h4>{{ $course->title }}</h4>
-                <p>{{ $course->description }}</p>
+                <p class="review-description">{{ $course->description }}</p>
 
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: {{ $course->progress ?? 0 }}%"></div>
+                <div class="instructor-info">
+                    <i class="fa-solid fa-circle-user"></i>
+                    <div>
+                        <p>{{ $course->instructor->name ?? 'Unknown Instructor' }}</p>
+                        <span>Instructor • Joined {{ $course->created_at->format('M Y') }}</span>
+                    </div>
                 </div>
 
-                <div class="course-footer">
-                    <div class="instructor">
-                    <i class="fa-solid fa-circle-user" style="color: rgb(99, 230, 190);"></i>                        <span>{{ Auth::user()->name }}</span>
-                    </div>
-                    {{-- <a href="{{ route(name: 'courses.edit', $course->id) }}" class="btn-course">
-                        <i class="fa-solid fa-pen"></i> Edit
-                    </a> --}}
+                <div class="review-actions">
+                    <a href="{{ route('courses.show', $course->id) }}" class="btn-view" target="_blank">
+                        <i class="fa-regular fa-eye"></i> Preview
+                    </a>
+                    
+                    @if($course->status == 'pending' || $course->status == 'rejected')
+                    <form action="{{ route('admin.courses.approve', $course->id) }}" method="POST" style="flex: 1;">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn-approve">
+                            <i class="fa-regular fa-check-circle"></i> Approve
+                        </button>
+                    </form>
+                    
+                    <button onclick="openRejectModal({{ $course->id }})" class="btn-reject">
+                        <i class="fa-regular fa-times-circle"></i> Reject
+                    </button>
+                    @elseif($course->status == 'approved')
+
+                    <form action="{{ route('admin.courses.Pending', $course->id) }}" method="POST" style="flex: 1;">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn-pending">
+                            <i class="fa-regular fa-clock"></i> Pending
+                        </button>
+                    </form>
+
+                    <form action="{{ route('admin.courses.publish', $course->id) }}" method="POST" style="flex: 1;">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn-approve">
+                            <i class="fa-regular fa-star"></i> Publish
+                        </button>
+                    </form>
+                    
+                    <form action="{{ route('admin.courses.reject', $course->id) }}" method="POST" style="flex: 1;">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn-reject">
+                            <i class="fa-regular fa-times-circle"></i> Reject
+                        </button>
+                    </form>
+                    @elseif($course->status == 'published')
+                    <span class="status-badge status-published" style="flex: 1; justify-content: center;">
+                        <i class="fa-regular fa-check-circle"></i> Live
+                    </span>
+                    @endif
                 </div>
             </div>
         </div>
-    </a>
-        
-    @endforeach
-</section>
+        @endforeach
+    </section>
 
-    <!-- Activity Section -->
-    <div class="activity-section">
-        <div class="activity-card">
-            <div class="activity-header">
-                <h3>Recent Student Activity</h3>
-                <a href="#" class="view-all">View All</a>
-            </div>
-            
-            <div class="activity-list">
-                <div class="activity-item">
-                    <div class="activity-avatar">
-                        <i class="fa-regular fa-user"></i>
-                    </div>
-                    <div class="activity-details">
-                        <p>John Doe completed "Advanced Web Architecture"</p>
-                        <span>Lesson 24: React Hooks Deep Dive</span>
-                    </div>
-                    <span class="activity-time">5 min ago</span>
-                </div>
-                
-                <div class="activity-item">
-                    <div class="activity-avatar">
-                        <i class="fa-regular fa-user"></i>
-                    </div>
-                    <div class="activity-details">
-                        <p>Sarah Smith started "Machine Learning Models"</p>
-                        <span>Getting started with Python</span>
-                    </div>
-                    <span class="activity-time">15 min ago</span>
-                </div>
-                
-                <div class="activity-item">
-                    <div class="activity-avatar">
-                        <i class="fa-regular fa-user"></i>
-                    </div>
-                    <div class="activity-details">
-                        <p>Mike Johnson left a review</p>
-                        <span>★★★★★ "Best course ever!"</span>
-                    </div>
-                    <span class="activity-time">1 hour ago</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="activity-card">
-            <div class="activity-header">
-                <h3>Pending Tasks</h3>
-                <span class="stat-change">3 tasks</span>
-            </div>
-            
-            <div class="activity-list">
-                <div class="activity-item">
-                    <div class="activity-avatar" style="background: rgba(16,185,129,0.1); color: #10b981;">
-                        <i class="fa-regular fa-pen-to-square"></i>
-                    </div>
-                    <div class="activity-details">
-                        <p>Grade 12 assignments</p>
-                        <span>Machine Learning course</span>
-                    </div>
-                    <span class="activity-time">Due today</span>
-                </div>
-                
-                <div class="activity-item">
-                    <div class="activity-avatar" style="background: rgba(245,158,11,0.1); color: #f59e0b;">
-                        <i class="fa-regular fa-message"></i>
-                    </div>
-                    <div class="activity-details">
-                        <p>Reply to 5 student questions</p>
-                        <span>Q&A section</span>
-                    </div>
-                    <span class="activity-time">2 pending</span>
-                </div>
-                
-                <div class="activity-item">
-                    <div class="activity-avatar" style="background: rgba(239,68,68,0.1); color: #ef4444;">
-                        <i class="fa-regular fa-calendar"></i>
-                    </div>
-                    <div class="activity-details">
-                        <p>Update course content</p>
-                        <span>Web Development module</span>
-                    </div>
-                    <span class="activity-time">Tomorrow</span>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Pagination -->
     <div class="pagination-wrapper" style="margin-top: 50px; display: flex; justify-content: center;">
-            {{ $courses->links() }}
-        </div>
+        {{ $courses->links() }}
+    </div>
+</div>
+
+<!-- Reject Modal -->
+<div id="rejectModal" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeRejectModal()">&times;</button>
+        <h3>Reject Course</h3>
+        <p>Please provide a reason for rejecting this course. This will be sent to the instructor.</p>
+        
+        <form id="rejectForm" method="POST">
+            @csrf
+            @method('PATCH')
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 10px; color: var(--text-muted);">Rejection Reason</label>
+                <textarea name="rejection_reason" rows="4" required 
+                    style="width: 100%; padding: 15px; background: var(--surface-light); border: 1px solid var(--border-color); border-radius: 16px; color: white; font-family: 'Inter', sans-serif;"></textarea>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" onclick="closeRejectModal()" class="btn-secondary" style="flex: 1;">Cancel</button>
+                <button type="submit" class="btn-reject" style="flex: 1;">Reject Course</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
-function filterCategory(cat) {
-    document.querySelectorAll('.course-item').forEach(c => {
-        c.style.display = (cat === 'all' || c.dataset.category === cat) ? 'block' : 'none';
+function filterStatus(status) {
+    const courses = document.querySelectorAll('.review-card');
+    
+    courses.forEach(course => {
+        if (status === 'all' || course.dataset.status === status) {
+            course.style.display = 'block';
+        } else {
+            course.style.display = 'none';
+        }
     });
     
-    document.querySelectorAll('.cat-btn').forEach(btn => {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
     });
     event.target.classList.add('active');
 }
 
-// Sidebar toggle
 const sidebar = document.getElementById('sidebar');
 const toggleBtn = document.getElementById('sidebar-toggle');
 
@@ -1283,14 +1415,12 @@ toggleBtn.addEventListener('click', () => {
     sidebar.classList.toggle('active');
 });
 
-// Close sidebar when clicking outside (optional)
 document.addEventListener('click', (e) => {
     if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target) && sidebar.classList.contains('active')) {
         sidebar.classList.remove('active');
     }
 });
 
-// Update active state based on scroll or click (for demo)
 document.querySelectorAll('#sidebar a').forEach(link => {
     link.addEventListener('click', function(e) {
         if (!this.classList.contains('brand-side') && !this.closest('form')) {
@@ -1301,14 +1431,31 @@ document.querySelectorAll('#sidebar a').forEach(link => {
     });
 });
 
-// Simulate real-time updates
-function updateStats() {
-    // This would be replaced with actual AJAX calls
-    console.log('Stats updated');
+// Reject Modal
+const rejectModal = document.getElementById('rejectModal');
+const rejectForm = document.getElementById('rejectForm');
+
+function openRejectModal(courseId) {
+    rejectModal.classList.add('active');
+    rejectForm.action = `/admin/courses/${courseId}/reject`;
 }
 
-// Refresh data every 30 seconds
-setInterval(updateStats, 30000);
+function closeRejectModal() {
+    rejectModal.classList.remove('active');
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    if (event.target === rejectModal) {
+        closeRejectModal();
+    }
+}
+
+// Auto-refresh data every 60 seconds
+setInterval(() => {
+    // You could implement AJAX refresh here
+    console.log('Refreshing dashboard data...');
+}, 60000);
 </script>
 
 @endsection
