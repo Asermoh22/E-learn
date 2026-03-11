@@ -587,42 +587,67 @@ body {
     max-height: 500px;
 }
 
+/* Lesson Item Styles */
 .lecture-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
+    padding: 15px 20px;
     border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    margin: 2px 0;
+    cursor: pointer;
+    background: transparent;
 }
 
 .lecture-item:last-child {
     border-bottom: none;
 }
 
-.lecture-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+/* Hover Effect */
+.lecture-item:hover {
+    background: rgba(228, 67, 32, 0.08);
+    transform: translateX(8px);
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(228, 67, 32, 0.15);
 }
 
-.lecture-info i {
+.lecture-item:hover .lecture-info i {
     color: var(--brand-main);
-    width: 20px;
+    transform: scale(1.1);
+}
+
+.lecture-item:hover .lecture-info span {
+    color: white;
+}
+
+.lecture-item:hover .lecture-duration {
+    color: var(--brand-main);
+    background: rgba(228, 67, 32, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+/* Smooth transitions for child elements */
+.lecture-info i {
+    transition: all 0.3s ease;
+    color: var(--text-muted);
 }
 
 .lecture-info span {
-    color: var(--text-main);
-    font-size: 15px;
+    transition: color 0.3s ease;
 }
 
 .lecture-duration {
-    color: var(--text-muted);
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    transition: all 0.3s ease;
 }
 
+/* Active state if needed */
+.lecture-item:active {
+    transform: translateX(5px);
+    background: rgba(228, 67, 32, 0.15);
+}
 /* Sidebar */
 .sidebar-card {
     background: var(--surface);
@@ -1142,15 +1167,22 @@ body {
                             </div>
                             <div class="curriculum-content">
                                 @forelse ($section->lessons as $lecture)
-                                <div class="lecture-item">
-                                    <div class="lecture-info">
-                                        <i class="fa-solid fa-play-circle"></i>
-                                        <span>{{ $lecture->title }}</span>
-                                    </div>
-                                    <div class="lecture-duration">
-                                        <i class="fa-regular fa-clock"></i> {{ $lecture->duration }}
-                                    </div>
-                                </div>
+                                <a href="{{ $lecture->content_url }}" target="_blank">
+                                    <div class="lecture-item">
+                                            <div class="lecture-info">
+                                            @if($lecture->content_type == 'video')    
+                                                <i class="fa-solid fa-play-circle"></i>
+                                            @elseif($lecture->content_type == 'pdf')
+                                                <i class="fa-solid fa-file-alt"></i>
+                                            @endif    
+                                                <span>{{ $lecture->title }}</span>
+                                            </div>
+                                            <div class="lecture-duration">
+                                                <i class="fa-regular fa-clock"></i> {{ $lecture->duration }}
+                                            </div>
+                                        </div>
+                                </a>
+                                
                                 @empty
                                 <div class="lecture-item">
                                     <span>No lessons in this section yet.</span>
@@ -1337,7 +1369,6 @@ body {
 </div>
 
 <script>
-// Toggle curriculum sections
 function toggleCurriculum(element) {
     const parent = element.closest('.curriculum-item');
     parent.classList.toggle('active');
@@ -1350,7 +1381,6 @@ function toggleCurriculum(element) {
     }
 }
 
-// Toggle wishlist
 function toggleWishlist(courseId, button) {
     button.classList.toggle('active');
     const icon = button.querySelector('i');
@@ -1359,22 +1389,17 @@ function toggleWishlist(courseId, button) {
         icon.classList.remove('fa-regular');
         icon.classList.add('fa-solid');
         
-        // Show success message
         showNotification('Added to wishlist!', 'success');
     } else {
         icon.classList.remove('fa-solid');
         icon.classList.add('fa-regular');
         
-        // Show removed message
         showNotification('Removed from wishlist', 'info');
     }
     
-    // Here you would typically make an AJAX call to update the wishlist
 }
 
-// Show notification
 function showNotification(message, type = 'success') {
-    // Create notification element
     const notification = document.createElement('div');
     notification.style.cssText = `
         position: fixed;
@@ -1391,7 +1416,6 @@ function showNotification(message, type = 'success') {
     `;
     notification.textContent = message;
     
-    // Add animation
     const style = document.createElement('style');
     style.textContent = `
         @keyframes slideIn {
@@ -1410,7 +1434,6 @@ function showNotification(message, type = 'success') {
     // Add to body
     document.body.appendChild(notification);
     
-    // Remove after 3 seconds
     setTimeout(() => {
         notification.style.animation = 'slideIn 0.3s ease reverse';
         setTimeout(() => {
@@ -1419,17 +1442,13 @@ function showNotification(message, type = 'success') {
     }, 3000);
 }
 
-// Initialize curriculum sections
 document.addEventListener('DOMContentLoaded', function() {
-    // Set initial icon rotations
     document.querySelectorAll('.curriculum-item.active .curriculum-header i').forEach(icon => {
         icon.style.transform = 'rotate(90deg)';
     });
 });
 
-// Toggle user menu
 function toggleUserMenu() {
-    // Implement user menu dropdown if needed
     console.log('User menu clicked');
 }
 </script>

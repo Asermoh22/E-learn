@@ -1441,9 +1441,7 @@ textarea.form-control {
                 <label>Content Type</label>
                 <select name="content_type" class="form-control" required>
                     <option value="video">Video</option>
-                    <option value="article">Article</option>
-                    <option value="quiz">Quiz</option>
-                    <option value="assignment">Assignment</option>
+                    <option value="pdf">PDF</option>
                 </select>
             </div>
             

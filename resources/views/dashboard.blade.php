@@ -1125,7 +1125,7 @@ body {
     <!-- Dashboard Header -->
     <div class="dashboard-header">
         <div class="header-title">
-            <h1>Admin Dashboard, {{ Auth::user()->name }}! 🔐</h1>
+            <h1>Admin Dashboard, {{ Auth::user()->name }}!</h1>
             <p>Manage and review all courses on the platform.</p>
         </div>
         <div class="header-actions">
@@ -1182,7 +1182,7 @@ body {
         
         <div class="stat-item">
             <div class="stat-item-icon total">
-                <i class="fa-regular fa-book-open"></i>
+                <i class="fa-solid fa-book-open"></i>           
             </div>
             <div class="stat-item-info">
                 <h4>{{ $totalCourses ?? 0 }}</h4>
@@ -1301,7 +1301,7 @@ body {
                 <div class="instructor-info">
                     <i class="fa-solid fa-circle-user"></i>
                     <div>
-                        <p>{{ $course->instructor->name ?? 'Unknown Instructor' }}</p>
+                        <p>{{ $course->instructor->user->name ?? 'Unknown Instructor' }}</p>
                         <span>Instructor • Joined {{ $course->created_at->format('M Y') }}</span>
                     </div>
                 </div>
