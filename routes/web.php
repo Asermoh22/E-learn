@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardStudentController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\EnrollmentController;
 
 
 
@@ -40,6 +41,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('Lessons', LessonController::class)->middleware('auth');
+Route::post('/enrollments/{course_id}', [EnrollmentController::class, 'store'])->name('enrollments.store');
 
 Route::get('/', function () {
     return view('landing');

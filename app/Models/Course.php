@@ -39,8 +39,19 @@ class Course extends Model
     public function sections(){
         return $this->hasMany(Section::class);
     }
-    public function lessons()
+   public function lessons()
     {
-        return $this->hasMany(Lesson::class);
+        return $this->hasManyThrough(
+            Lesson::class,
+            Section::class,
+            'course_id',   
+            'section_id', 
+            'id',          
+            'id'           
+        );
+    }
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
     }
 }

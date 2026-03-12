@@ -1034,13 +1034,13 @@ body {
                     </div>
                 </div>
                 
-                {{-- <div class="course-actions-large">
-                    @if(Auth::user()->enrollments->contains('course_id', $course->id))
+                <div class="course-actions-large">
+                    @if(Auth::user()->student->enrollments->contains('course_id', $course->id))
                     <a href="" class="btn-primary">
                         <i class="fa-solid fa-play"></i> Continue Learning
                     </a>
                     @else
-                    <form action="{{ route('course.enroll', $course->id) }}" method="POST" style="display: inline;">
+                    <form action="{{ route('enrollments.store', ['course_id' => $course->id]) }}" method="POST" style="display: inline;">
                         @csrf
                         <button type="submit" class="btn-primary">
                             <i class="fa-solid fa-graduation-cap"></i> 
@@ -1056,7 +1056,7 @@ body {
                     <button class="btn-wishlist-large" onclick="toggleWishlist({{ $course->id }}, this)">
                         <i class="fa-regular fa-heart"></i>
                     </button>
-                </div> --}}
+                </div>
             </div>
             
             <div class="course-hero-right">
@@ -1105,11 +1105,8 @@ body {
         </div>
     </section>
 
-    <!-- Course Content Grid -->
     <div class="course-content-grid">
-        <!-- Main Content Column -->
         <div class="main-content">
-            <!-- About This Course -->
             <div class="content-card">
                 <div class="card-header">
                     <h2><i class="fa-solid fa-circle-info"></i> About This Course</h2>
@@ -1148,13 +1145,13 @@ body {
                 </div>
             </div>
 
-            <!-- Course Curriculum -->
            <div class="content-card">
             <div class="card-header">
                 <h2><i class="fa-solid fa-align-justify"></i>Course Curriculum</h2>
-                <span>{{ $sectionCount ?? 0 }} sections • {{ $course->lessons_count ?? 0 }} lessons</span>
+                <span>{{ $sectionCount ?? 0 }} sections • {{ $course->lessonCount ?? 0 }} lessons</span>
             </div>
             <div class="card-body">
+                @if(Auth::user()->student->enrollments->contains('course_id', $course->id))
                 <div class="curriculum-section">
                     @forelse ($course->sections as $section)
                         <div class="curriculum-item {{ $loop->first ? 'active' : '' }}">
@@ -1194,6 +1191,7 @@ body {
                     <p>No sections yet for this course.</p>
                     @endforelse
                 </div>
+                @endif
             </div>
         </div>
 

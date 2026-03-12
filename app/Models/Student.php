@@ -11,6 +11,9 @@ class Student extends Model
         'user_id'
     ];
 
+    public function enrollments(){
+        return $this->hasMany(Enrollment::class);
+    }
      public static function totalStudent()
     {
         return self::count();
